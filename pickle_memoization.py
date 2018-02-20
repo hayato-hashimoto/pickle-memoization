@@ -4,6 +4,7 @@ import os
 import pickle
 import hashlib
 import inspect
+import sys
 
 class digester_wrapper:
   def __init__(self, digester):
@@ -49,17 +50,17 @@ def memoize(cachedir):
       hash_object(m, "**", (args, kwargs, defaults))
       cachefile = os.path.join(cachedir, m.hexdigest())
       if os.path.exists(cachefile):
-        print("Reading from the cache file for {}...".format(func.__qualname__))
+        print('Reading from "{}" memoizing {}...'.format(cachefile, func.__qualname__), file=sys.stderr)
         with open(cachefile, "rb") as f:
           result = pickle.load(f)
-          print("Done")
+          print("Done", file=sys.stderr)
           return result
       else:
         result = func(*args, **kwargs)
-        print("Saving to the cache file for {}...".format(func.__qualname__))
+        print('Saving to "{}" memoizing {}...'.format(cachefile, func.__qualname__), file=sys.stderr)
         with open(cachefile, "wb") as f:
           pickle.dump(result, f)
-        print("Done")
+        print("Done", file=sys.stderr)
         return result
     return wrap
   return _memoize
